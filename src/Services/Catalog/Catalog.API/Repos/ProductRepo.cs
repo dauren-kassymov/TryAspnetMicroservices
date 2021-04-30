@@ -34,31 +34,40 @@ namespace Catalog.API.Repos
 
         public async Task<IEnumerable<Product>> GetProductByName(string name)
         {
-            var filter = Builders<Product>.Filter.ElemMatch()
+            var filter = Builders<Product>.Filter.ElemMatch(x => x.Name, name);
             return await _context
                 .Products
                 .Find(filter)
                 .ToListAsync();
         }
 
-        public Task<IEnumerable<Product>> GetProductByCategory(string category)
+        public async Task<IEnumerable<Product>> GetProductByCategory(string category)
         {
-            throw new System.NotImplementedException();
+            var filter = Builders<Product>.Filter.Eq(x => x.Name, category);
+            return await _context
+                .Products
+                .Find(filter)
+                .ToListAsync();
         }
 
-        public Task CreateProduct(Product product)
+        public async Task CreateProduct(Product product)
         {
-            throw new System.NotImplementedException();
+            await _context.Products.InsertOneAsync(product);
         }
 
-        public Task<bool> UpdateProduct(Product product)
+        public async Task<bool> UpdateProduct(Product product)
         {
-            throw new System.NotImplementedException();
+            var res = await _context.Products
+                .ReplaceOneAsync(filter: x => x.Id == product.Id, product);
+            return res.IsAcknowledged && res.ModifiedCount > 0;
         }
 
-        public Task<bool> DeleteProduct(string id)
+        public async Task<bool> DeleteProduct(string id)
         {
-            throw new System.NotImplementedException();
+            var filter = Builders<Product>.Filter.Eq(x => x.Id, id);
+            var res = await _context.Products
+                .DeleteOneAsync(filter);
+            return res.IsAcknowledged && res.DeletedCount > 0;
         }
     }
 }
