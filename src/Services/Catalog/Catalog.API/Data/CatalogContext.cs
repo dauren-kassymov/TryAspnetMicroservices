@@ -1,15 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
 using Catalog.API.Entities;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace Catalog.API.Data
 {
     public class CatalogContext : ICatalogContext
     {
-        public CatalogContext(IConfiguration config)
+        public CatalogContext(IOptions<DatabaseSettings> options)
         {
-            var dbSettings = config.Get<DatabaseSettings>();
+            var dbSettings = options.Value;
             var client = new MongoClient(dbSettings.ConnectionString);
             var db = client.GetDatabase(dbSettings.DatabaseName);
             
@@ -20,9 +20,9 @@ namespace Catalog.API.Data
         public IMongoCollection<Product> Products { get; }
 
         
-        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
-        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Local")]
-        private class DatabaseSettings
+        [SuppressMessage("ReSharper", "ClassNeverInstantiated.Global")]
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
+        public class DatabaseSettings
         {
             public string ConnectionString { get; set; }
             public string DatabaseName { get; set; }
