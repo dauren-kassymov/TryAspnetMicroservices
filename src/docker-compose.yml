@@ -3,25 +3,36 @@ version: '3.4'
 services:
   catalogdb:
     image: mongo:4.2-bionic
-  
+
   basketdb:
     image: redis:6.2.1-alpine
-  
+
+  discountdb:
+#    image: postgres:13-alpine
+    image: timescale/timescaledb:2.2.0-pg13
+
   portainer:
     image: portainer/portainer-ce:2.1.1-alpine
-  
+
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
     build:
       context: .
       dockerfile: Services/Catalog/Catalog.API/Dockerfile
-  
+
   basket.api:
     image: ${DOCKER_REGISTRY-}basketapi
     build:
       context: .
       dockerfile: Services/Basket/Basket.API/Dockerfile
-      
+
+  discount.api:
+    image: ${DOCKER_REGISTRY-}discountapi
+    build:
+      context: .
+      dockerfile: Services/Discount/Discount.API/Dockerfile
+
 volumes:
   mongo_data:
   portainer_data:
+  postgres_data:
