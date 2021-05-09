@@ -13,6 +13,8 @@ namespace Ordering.Infrastructure.Persistence
             if (!context.Orders.Any())
             {
                 context.Orders.AddRange(GetOrders());
+                await context.SaveChangesAsync();
+                logger.LogInformation("Successfully seed db {DbContext}", nameof(OrderContext));
             }
         }
 
@@ -25,7 +27,7 @@ namespace Ordering.Infrastructure.Persistence
                     FirstName = $"fname-{x}",
                     LastName = $"lname-{x}",
                     EmailAddress = $"email-{x}",
-                    TotalPrice = x * 100
+                    TotalPrice = x * 1000
                 });
         }
     }
