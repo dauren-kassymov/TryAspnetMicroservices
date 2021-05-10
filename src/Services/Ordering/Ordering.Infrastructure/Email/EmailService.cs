@@ -13,9 +13,9 @@ namespace Ordering.Infrastructure.Email
     public class EmailService : IEmailService
     {
         private readonly EmailSettings _emailSettings;
-        private readonly Logger<EmailService> _logger;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(IOptions<EmailSettings> emailSettings, Logger<EmailService> logger)
+        public EmailService(IOptions<EmailSettings> emailSettings, ILogger<EmailService> logger)
         {
             _emailSettings = emailSettings.Value ?? throw new ArgumentNullException(nameof(emailSettings));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
