@@ -11,6 +11,9 @@ services:
 #    image: postgres:13-alpine
     image: timescale/timescaledb:2.2.0-pg13
 
+  orderdb:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+
   portainer:
     image: portainer/portainer-ce:2.1.1-alpine
 
@@ -37,6 +40,12 @@ services:
     build:
       context: .
       dockerfile: Services/Discount/Discount.Grpc/Dockerfile
+
+  ordering.api:
+    image: ${DOCKER_REGISTRY-}orderingapi
+    build:
+      context: .
+      dockerfile: Services/Ordering/Ordering.API/Dockerfile
 
 volumes:
   mongo_data:
