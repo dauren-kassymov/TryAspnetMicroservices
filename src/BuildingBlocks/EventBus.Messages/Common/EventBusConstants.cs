@@ -1,7 +1,7 @@
 ﻿namespace EventBus.Messages.Common
 {
-    public class EventBusConstants
+    public static class EventBusConstants
     {
-        
+        public static string BasketCheckoutQueue = "basketcheckout-queue";
     }
 }
