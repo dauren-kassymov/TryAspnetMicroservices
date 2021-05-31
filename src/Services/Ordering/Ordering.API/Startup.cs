@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EventBus.Messages.Common;
+using MassTransit;
+using Ordering.API.EventBusConsumer;
 using Ordering.Application;
 using Ordering.Infrastructure;
 
@@ -30,6 +33,23 @@ namespace Ordering.API
             services.AddApplicationServices();
             services.AddInfrastructureServices(Configuration);
 
+            // MassTransit-RabbitMQ config
+            services.AddMassTransit(config =>
+            {
+                config.AddConsumer<BasketCheckoutConsumer>();
+                
+                config.UsingRabbitMq((context, configurator) =>
+                {
+                    configurator.Host(Configuration["EventBusSettings:HostAddress"]);
+                    
+                    configurator.ReceiveEndpoint(EventBusConstants.BasketCheckoutQueue, endpointConfigurator =>
+                    {
+                        endpointConfigurator.ConfigureConsumer<BasketCheckoutConsumer>(context);
+                    });
+                });
+            });
+            services.AddMassTransitHostedService();
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
