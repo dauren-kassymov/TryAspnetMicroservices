@@ -30,11 +30,21 @@ services:
   orderdb:
     container_name: orderdb
     environment:
-      SA_PASSWORD: "Password123!"
+      MSSQL_SA_PASSWORD: "Password123!"
       ACCEPT_EULA: "Y"
     restart: always
     ports:
       - "1433:1433"
+
+  rabbitmq:
+    container_name: rabbitmq
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    ports:
+      - "5672:5672"
+      - "15672:15672"
 
   portainer:
     container_name: portainer
@@ -62,8 +72,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - "CacheSettings:ConnectionString=basketdb:6379"
       - "GrpcSettings:DiscountUrl=http://discount.grpc:80"
+      - "EventBusSettings:HostAddress=amqp://admin:admin@rabbitmq:5672"
     depends_on:
       - basketdb
+      - rabbitmq
     ports:
       - "8001:80"
 
@@ -92,7 +104,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - "ConnectionStrings:OrderingConnectionString=Server=orderdb;Database=OrderDb;User Id=sa;Password=Password123!"
+      - "EventBusSettings:HostAddress=amqp://admin:admin@rabbitmq:5672"
     depends_on:
       - orderdb
+      - rabbitmq
     ports:
       - "8004:80"
